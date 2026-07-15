@@ -2,7 +2,7 @@
 
 このプロジェクトは、**列多相 Union** の toy言語のプロジェクトです。
 
-**列多相 Union (Row polymorphic Union)** は **列多相バリアント(Row polymorphic variants)** を変形しタグがない値も扱えるUnion型したものです。
+**列多相 Union (Row polymorphic Union)** は **列多相バリアント(Row polymorphic variants)** を変形しタグがない値も扱えるUnion型にしたものです。
 **積型（Product Types）としてデータコンストラクタ** と **再帰型(Recursive Types)** に対応し、柔軟かつ型安全なオープン・バリアント（拡張可能な直和型）を実現しました。
 
 このプロジェクトには、以下の２つの実装が含まれています:
@@ -198,3 +198,7 @@ val v : Int = 10
 ### 不動点とサイクル検出による再帰型解決
 
 再帰的な部分型判定が無限ループに陥るのを防ぐため、`seen` リスト（履歴）を用いて共帰的（coinductive）に同一性を検査するサイクル検出アルゴリズムが組み込まれています。
+
+## License
+
+MIT License
