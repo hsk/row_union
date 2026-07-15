@@ -1,0 +1,5 @@
+(library
+ (name row_union))
+
+(ocamllex lexer)
+(ocamlyacc parser)

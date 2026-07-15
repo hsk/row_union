@@ -1,0 +1,4 @@
+(executable
+ (public_name row_union)
+ (name main)
+ (libraries row_union))
