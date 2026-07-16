@@ -17,6 +17,9 @@ test:
 	rm -rf lib/parser.ml lib/lexer.ml lib/*.cm* *.cm* test/*.cm*
 	./row_union_test
 
-.PHONY: test
+web:
+	dune build web/app.js
+
+.PHONY: test web
 clean:
 	rm -rf lib/parser.ml lib/lexer.ml bin/*.cm* lib/*.cm* test/*.cm* *.cm* row_union row_union_test _build

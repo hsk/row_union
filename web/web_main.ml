@@ -27,7 +27,7 @@ let code =
 "let rec ev x =
   match x with
   | Add(l, r) -> ev l + ev r
-  | i:Int -> i
+  | i:Int -> i (* tag less type pattern *)
 let rec ev2 x =
   match x with
   | Add(Add(l1, r1), r) -> ev2 l1 + ev2 r1 + ev2 r
