@@ -15,7 +15,7 @@ let run_code code_str =
   try
     let lexbuf = Lexing.from_string code_str in
     let ast = Parser.prog_main Lexer.token lexbuf in
-    Eval.eval_prog ast |> ignore;
+    ignore (Eval.eval_prog ast);
     flush stdout; flush stderr;
     (Buffer.contents stdout_buffer, Buffer.contents stderr_buffer)
   with e ->
@@ -54,6 +54,21 @@ let () =
   let error_title = El.h3 ~at:[At.class' (Jstr.v "section-title error-title")] [El.txt (Jstr.v "Error")] in
   let error_pre = El.pre ~at:[At.class' (Jstr.v "error-box")] [] in
 
+  let github_link = El.a 
+    ~at:[
+      At.class' (Jstr.v "github-link"); 
+      At.href (Jstr.v "https://github.com/hsk/row_union");
+      At.v (Jstr.v "target") (Jstr.v "_blank")
+    ] 
+    [El.txt (Jstr.v "GitHub ↗")] 
+  in
+
+  let title_container = El.div ~at:[At.class' (Jstr.v "title-container")] [] in
+  El.append_children title_container [
+    El.h2 ~at:[At.class' (Jstr.v "main-title")] [El.txt (Jstr.v "Row Union")];
+    github_link
+  ];
+
   El.set_prop El.Prop.value (Jstr.v code) textarea;
 
   let on_click _ =
@@ -65,7 +80,7 @@ let () =
   let _listener = Ev.listen Ev.click on_click (El.as_target button) in
 
   El.append_children left_panel [
-    El.h2 ~at:[At.class' (Jstr.v "main-title")] [El.txt (Jstr.v "Row Union")];
+    title_container;
     textarea;
     button
   ];
