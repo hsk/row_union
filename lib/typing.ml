@@ -65,6 +65,24 @@ let alpha_equal t1 t2 =
             not (List.exists (fun (_, id2) -> id2 = v2.id) !pairs)
             && (pairs := (v1.id, v2.id) :: !pairs; true)))
 
+let union_types t1 t2 =
+  let t1_flat = flatten_top [] t1 in
+  let t2_flat = flatten_top [] t2 in
+  match t1_flat, t2_flat with
+  | [Var v1], other when v1.link = None ->
+      set_link v1 (Some other); other
+  | other, [Var v2] when v2.link = None ->
+      set_link v2 (Some other); other
+  | _ ->
+      let rec union l1 l2 =
+        match l1 with
+        | [] -> l2
+        | x :: xs ->
+            if List.exists (fun y -> same_type [x] [y]) l2 then union xs l2
+            else x :: union xs l2
+      in
+      union t1_flat t2_flat
+
 let rec subtype hist t1 t2 =
   if List.exists (fun (x, y) -> same_type x t1 && same_type y t2) hist then true
   else sub_core ((t1, t2) :: hist) (flatten_top [] t1) (flatten_top [] t2)
@@ -73,9 +91,9 @@ and sub_core hist t1 t2 =
   else match t1, t2 with
   | [Var v], _ when v.link = None -> set_link v (Some t2); true
   | _, [Var v] when v.link = None -> set_link v (Some t1); true
-  | _ -> List.for_all (fun x -> try_match_any hist x t2) t1   (* sub_list を消去して1行化 *)
+  | _ -> List.for_all (fun x -> try_match_any hist x t2) t1
 and try_match_any hist x ys =
-  List.exists (fun y -> with_transaction (fun () -> elem_sub hist x y)) ys
+  with_transaction (fun () -> List.exists (fun y -> elem_sub hist x y) ys)
 and elem_sub hist e1 e2 =
   match e1, e2 with
   | Arrow (a1, b1), Arrow (a2, b2) -> subtype hist a2 a1 && subtype hist b1 b2
@@ -102,7 +120,7 @@ let rec pat p ty_list =
        | PVar x -> [(x, [Var v])]
        | PAnn (x, t_ann) -> set_link v (Some t_ann); [(x, t_ann)]
        | PConst (c, args) ->
-           let ts = List.map (fun _ -> [Var (new_var ())]) args in (* 1行に短縮 *)
+           let ts = List.map (fun _ -> [Var (new_var ())]) args in
            set_link v (Some [Const (c, ts)]);
            List.flatten (List.map2 pat args ts)
        | PDefault -> failwith "Unexpected default in pat")
@@ -136,24 +154,26 @@ let rec check gamma expr =
       if subtype [] (check gamma e1) [Int] && subtype [] (check gamma e2) [Int] then [Int]
       else failwith "Type error in addition"
   | Match (e, cs) ->
-      let t = [Var (new_var ())] in
       let t2 = check gamma e in
-      let t3 = cases gamma cs t2 t in
+      let t_ret, t3 = cases gamma cs t2 in
       if List.exists (fun (p, _) -> p = PDefault) cs then (
         match t2 with
-        | [Var v] when v.link = None -> if t3 <> [] then set_link v (Some t3); t
-        | _ -> List.iter (fun x -> ignore (try_match_any [] x t3)) t2; t
+        | [Var v] when v.link = None -> if t3 <> [] then set_link v (Some t3); t_ret
+        | _ -> List.iter (fun x -> ignore (try_match_any [] x t3)) t2; t_ret
       ) else (
-        if subtype [] t2 t3 then t else failwith "Match type mismatch"
+        if subtype [] t2 t3 then t_ret else failwith "Match type mismatch"
       )
-and cases gamma branches t_match t2 =
+and cases gamma branches t_match =
   match branches with
-  | [] -> []
+  | [] -> ([], [])
   | (PDefault, e1) :: _ ->
-      if subtype [] (check (("default", t_match) :: gamma) e1) t2 then []
-      else failwith "Default branch type mismatch"
+      let t_tail = [Var (new_var ())] in
+      let t_ret = check (("default", t_tail) :: gamma) e1 in
+      (t_ret, t_tail)
   | (pat_ast, e1) :: cs ->
       let head = Var (new_var ()) in
-      if subtype [] (check (pat pat_ast [head] @ gamma) e1) t2 then
-        head :: cases gamma cs t_match t2
-      else failwith "Branch type mismatch"
+      let delta = pat pat_ast [head] in
+      let t_e1 = check (delta @ gamma) e1 in
+      let t_cs_ret, t3 = cases gamma cs t_match in
+      let t_ret = union_types t_e1 t_cs_ret in
+      (t_ret, head :: t3)

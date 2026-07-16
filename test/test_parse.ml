@@ -90,7 +90,7 @@ let _ =
 let _ =
   reset_tvars ();
   let e_nested = test_parse_expr "nested_constructor_pattern" "fun x -> match x with | Add(i:Int, r) -> i + 1 | _ -> 0" in
-  assert_type_compatible (check [] e_nested) (test_parse_t "nested_constructor_pattern" "Add(Int, 'a) -> Int") "nested_constructor_pattern"
+  assert_type_compatible (check [] e_nested) (test_parse_t "nested_constructor_pattern" "Add(Int, 'a) | 'b -> Int") "nested_constructor_pattern"
 
 let _ =
   reset_tvars ();

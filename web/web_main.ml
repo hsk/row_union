@@ -32,6 +32,10 @@ let rec ev2 x =
   match x with
   | Add(Add(l1, r1), r) -> ev2 l1 + ev2 r1 + ev2 r
   | i:Int -> i
+let rec ev3 x =
+      match x with
+      | i:Int -> i
+      | default -> true
 let a = 1
 let b = Add(Mul(2,1),3)
 let c = ev (Add(Add(1,2),Add(3,4)))

@@ -27,6 +27,14 @@ let _ =
   let e_match = Match (VarExpr "v", [(PAnn ("x", [Int]), VarExpr "x"); (PAnn ("x", [Bool]), IntExpr 1); (PDefault, IntExpr 0)]) in
   assert_type_eq (check [("v", [Int; Bool; String])] e_match) [Int] "typecase_match"
 let _ =
+  let gamma = [("v", [Const ("i", [[Int]]); Const ("b", [[Bool]])])] in
+  let e_match_diff = Match (VarExpr "v", [
+    (PConst ("i", [PVar "x"]), ConstApp ("b", [BoolExpr true]));
+    (PConst ("b", [PVar "x"]), ConstApp ("i", [IntExpr 1]))
+  ]) in
+  let expected_t = [Const ("b", [[Bool]]); Const ("i", [[Int]])] in
+  assert_type_eq (check gamma e_match_diff) expected_t "match_return_different_types"
+let _ =
   let e_ev = Fix ("ev", Lam ("x", Match (VarExpr "x", [
     (PAnn ("i", [Int]), VarExpr "i");
     (PConst ("add", [PVar "l"; PVar "r"]), Add (App (VarExpr "ev", VarExpr "l"), App (VarExpr "ev", VarExpr "r")))
@@ -44,7 +52,7 @@ let _ =
   assert_true (subtype [] (check [] e_const) rec_e) "ev_constructor"
 let _ =
   let e_nested = Lam ("x", Match (VarExpr "x", [(PConst ("add", [PAnn ("i", [Int]); PVar "r"]), Add (VarExpr "i", IntExpr 1)); (PDefault, IntExpr 0)])) in
-  assert_type_eq (check [] e_nested) [Arrow ([Const ("add", [[Int]; [Var (new_var ())] ])], [Int])] "nested_constructor_pattern"
+  assert_type_eq (check [] e_nested) [Arrow ([Const ("add", [[Int]; [Var (new_var ())] ]); Var (new_var ())], [Int])] "nested_constructor_pattern"
 let _ =
   let e_deep = Fix ("ev", Lam ("x", Match (VarExpr "x", [
     (PConst ("add", [PConst ("add", [PVar "l1"; PVar "r1"]); PVar "r"]),
