@@ -27,14 +27,17 @@ let code =
 "let rec ev x =
   match x with
   | Add(l, r) -> ev l + ev r
-  | i:Int -> i (* tag less type pattern *)
+  | i:Int -> i (* type annotation pattern *)
 let rec ev2 x =
   match x with
   | Add(Add(l1, r1), r) -> ev2 l1 + ev2 r1 + ev2 r
   | i:Int -> i
-let v = 1
-let v = Add(Mul(2,1),3)
-let v = ev (Add(Add(1,2),Add(3,4)))
+let a = 1
+let b = Add(Mul(2,1),3)
+let c = ev (Add(Add(1,2),Add(3,4)))
+(* expressions *)
+;; 1+2
+;; Bar(1+2,3+4)
 "
 
 let () =
