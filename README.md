@@ -55,6 +55,9 @@ row_union/
 ├── test/
 │   ├── test_parse.ml    # パーサのテスト
 │   └── test_typing.ml   # 型システムのテスト
+├── web/
+│   ├── index.html       # 画面デザイン
+│   └── web_main.ml      # Web用エントリポイント
 ├── Makefile             # ビルド・テスト用のタスクランナー
 └── dune-project         # Dune パッケージ設定（OCaml エコシステム向け）
 ```
@@ -87,6 +90,12 @@ Dune を使用すると、依存関係やパッケージ管理が自動で解決
 
 ```bash
 dune build
+```
+
+web用のビルドは以下のコマンドを実行します。
+
+```bash
+dune build web/app.js
 ```
 
 ##### 2. サンプルプログラムの実行

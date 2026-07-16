@@ -1,0 +1,10 @@
+(executable
+ (name web_main)
+ (modes js)
+ (libraries brr js_of_ocaml row_union)
+ (preprocess (pps js_of_ocaml-ppx)))
+
+(rule
+ (target app.js)
+ (mode promote)
+ (action (copy web_main.bc.js %{target})))

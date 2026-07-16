@@ -1,0 +1,59 @@
+name: Deploy Playground to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main # もしデフォルトブランチが master なら master に変更してください
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout tree
+        uses: actions/checkout@v4
+
+      - name: Set up OCaml
+        uses: ocaml/setup-ocaml@v3
+        with:
+          ocaml-compiler: 5.2.0 # お使いのOCamlバージョンに合わせて調整してください
+          dune-cache: true
+
+      - name: Install dependencies
+        run: |
+          opam install . --deps-only --with-test --with-doc || true
+          opam install js_of_ocaml js_of_ocaml-ppx brr dune menhir
+
+      - name: Build Web Application
+        run: opam exec -- dune build web/app.js
+
+      - name: Prepare Deployment Directory
+        run: |
+          mkdir -p _site
+          # HTMLと、Duneが生成した成果物（app.js）を公開用フォルダに集約
+          cp web/index.html _site/
+          cp _build/default/web/app.js _site/
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: './_site'
+
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
