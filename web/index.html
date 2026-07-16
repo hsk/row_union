@@ -3,22 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OCaml Row Union Playground</title>
+    <title>Row Union Playground</title>
     <style>
-        /* 宇宙的な深みのあるダークカラー（Tokyo Nightベース） */
         :root {
             --bg-main: #1a1b26;
             --bg-sidebar: #16161e;
             --bg-input: #1f2335;
             --bg-output: #16161e;
             --bg-error: #2d1927;
-            --accent: #7aa2f7;      /* 洗練されたブルー */
+            --accent: #7aa2f7;
             --accent-glow: rgba(122, 162, 247, 0.3);
             --text-main: #a9b1d6;
             --text-bright: #c0caf5;
             --text-muted: #565f89;
-            --success: #9ece6a;     /* ネオングリーン */
-            --error: #f7768e;       /* ネオンピンク/レッド */
+            --success: #9ece6a;
+            --error: #f7768e;
             --border: #24283b;
             --font-mono: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
         }
@@ -34,7 +33,6 @@
             letter-spacing: -0.01em;
         }
 
-        /* 画面分割（美しいボーダーとシャドウ） */
         .app-container {
             display: flex;
             height: 100vh;
@@ -50,7 +48,6 @@
             height: 100%;
         }
 
-        /* 左パネル：プログラミングに集中できる暗さ */
         .left-panel {
             background-color: var(--bg-sidebar);
             border-right: 1px solid var(--border);
@@ -58,14 +55,12 @@
             z-index: 10;
         }
 
-        /* 右パネル：結果が引き立つ背景 */
         .right-panel {
             background-color: var(--bg-main);
             overflow-y: auto;
             gap: 16px;
         }
 
-        /* タイトルとリンクを横並びにするレイアウト */
         .title-container {
             display: flex;
             justify-content: space-between;
@@ -74,7 +69,6 @@
             width: 100%;
         }
 
-        /* タイトルアニメーション付きグラデーション */
         .main-title {
             margin: 0;
             font-size: 1.6rem;
@@ -85,7 +79,6 @@
             letter-spacing: -0.03em;
         }
 
-        /* ミニマルなGitHubリンクボタン */
         .github-link {
             color: var(--text-muted);
             text-decoration: none;
@@ -128,7 +121,6 @@
             color: var(--error);
         }
 
-        /* エディタ風テキストエリア */
         .code-input {
             flex: 1;
             width: 100%;
@@ -152,7 +144,6 @@
             box-shadow: inset 0 2px 8px rgba(0,0,0,0.2), 0 0 0 3px var(--accent-glow);
         }
 
-        /* サイバー感のあるネオンボタン */
         .run-button {
             margin-top: 20px;
             padding: 14px 28px;
@@ -179,7 +170,6 @@
             box-shadow: 0 2px 6px rgba(122, 162, 247, 0.2);
         }
 
-        /* ターミナル風出力ボックス */
         .output-box, .error-box {
             margin: 0;
             padding: 20px;
@@ -209,7 +199,6 @@
             min-height: 120px;
         }
 
-        /* スクロールバーのカスタマイズ */
         ::-webkit-scrollbar {
             width: 8px;
         }
