@@ -1,5 +1,8 @@
 # Row-Union 列多相Union
 
+[![Deploy](https://github.com/hsk/row_union/actions/workflows/deploy.yml/badge.svg)](https://github.com/hsk/row_union/actions/workflows/deploy.yml)
+[![Online Demo](https://img.shields.io/badge/demo-online-brightgreen)](https://hsk.github.io/row_union/)
+
 このプロジェクトは、**列多相 Union** の toy言語のプロジェクトです。
 
 🌐 **ブラウザで試す:** https://hsk.github.io/row_union/
